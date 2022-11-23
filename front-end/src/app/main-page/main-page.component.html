@@ -1,8 +1,67 @@
 <section class="section">
-    <div class="card side">
-        <p>ceva</p>
+  <div class="card side">
+
+    <div class="toolbar">
+      <button class="btn">New file</button>
+      <button class="btn">New folder</button>
+      <button class="btn">Rename</button>
+      <button class="btn" (click)="deleteSelected('left')">Delete</button>
     </div>
-    <div class="card side">
-        <p>ceva</p>
+    <div class="separator"></div>
+    <li class="item-name is-size-5">
+      <div class="item-left-side">
+        File name
+      </div>
+      <div class="item-right-side">
+        <p class="mr-6">Size</p>
+        <p class="ml-5">Last accessed</p>
+      </div>
+    </li>
+    <ul class="file-list">
+      <div *ngFor="let item of left_side_file_list; let i = index">
+        <li [attr.location]="item['path']" id="left_{{i}}" (click)="addItemToQueue('left_' + i)" class="item-name">
+          <div class="item-left-side">
+            <img class="item-icon" src="../../assets/images/{{item['type']}}.png">
+            <p>{{item['path'].split('\\').pop()}}</p>
+          </div>
+          <div class="item-right-side">
+            <p>{{item['size']}}</p>
+            <p>{{item['last_accessed'].split('T')[0]}} at {{item['last_accessed'].split('T')[1].split('.')[0]}}</p>
+          </div>
+        </li>
+      </div>
+    </ul>
+  </div>
+  <div class="card side">
+    <div class="toolbar">
+      <button class="btn">New file</button>
+      <button class="btn">New folder</button>
+      <button class="btn">Rename</button>
+      <button class="btn" (click)="deleteSelected('right')">Delete</button>
     </div>
+    <div class="separator"></div>
+    <li class="item-name is-size-5">
+      <div class="item-left-side">
+        File name
+      </div>
+      <div class="item-right-side">
+        <p class="mr-6">Size</p>
+        <p class="ml-5">Last accessed</p>
+      </div>
+    </li>
+    <ul class="file-list">
+      <div *ngFor="let item of right_side_file_list; let i = index">
+        <li [attr.location]="item['path']" id="right_{{i}}" (click)="addItemToQueue('right_' + i)" class="item-name">
+          <div class="item-left-side">
+            <img class="item-icon" src="../../assets/images/{{item['type']}}.png">
+            <p>{{item['path'].split('\\').pop()}}</p>
+          </div>
+          <div class="item-right-side">
+            <p>{{item['size']}}</p>
+            <p>{{item['last_accessed'].split('T')[0]}} at {{item['last_accessed'].split('T')[1].split('.')[0]}}</p>
+          </div>
+        </li>
+      </div>
+    </ul>
+  </div>
 </section>
