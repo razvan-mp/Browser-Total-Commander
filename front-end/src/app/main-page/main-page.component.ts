@@ -62,20 +62,109 @@ export class MainPageComponent {
           //@ts-ignore
           if (element.attributes['id'].value.toString().startsWith('left')) {
             //@ts-ignore
-            axios.post('http://localhost:8000/api/delete_file', JSON.stringify({file_name: element.attributes['location'].value.toString()}));
+            let item_location = element.attributes['location'].value.toString();
+            //@ts-ignore
+            if (element.attributes['item-type'].value.toString() === 'file') {
+              axios.post('http://localhost:8000/api/delete_file', JSON.stringify({file_name: item_location}));
+            } else {
+              axios.post('http://localhost:8000/api/delete_folder', JSON.stringify({folder_name: item_location}));
+            }
           }
         }//@ts-ignore
-        }).then(this.resetItems(side));
+      }).then(this.resetItems(side));
     } else {
       return new Promise(() => {
         for (let element of elements) {
           //@ts-ignore
           if (element.attributes['id'].value.toString().startsWith('right')) {
             //@ts-ignore
-            axios.post('http://localhost:8000/api/delete_file', JSON.stringify({file_name: element.attributes['location'].value.toString()}));
+            //@ts-ignore
+            let item_location = element.attributes['location'].value.toString();
+            //@ts-ignore
+            if (element.attributes['item-type'].value.toString() === 'file') {
+              axios.post('http://localhost:8000/api/delete_file', JSON.stringify({file_name: item_location}));
+            } else {
+              axios.post('http://localhost:8000/api/delete_folder', JSON.stringify({folder_name: item_location}));
+            }
           }
         }//@ts-ignore
       }).then(this.resetItems(side));
     }
+  }
+
+
+  openModal(modal_id: string) {
+    document.getElementById(modal_id)!.classList.add('is-active');
+  }
+
+  hideModal(modal_id: string) {
+    document.getElementById(modal_id)!.classList.remove('is-active');
+  }
+
+
+  private showSuccess() {
+    document.getElementById('success-modal')!.classList.remove('is-invisible');
+    setTimeout(() => {
+      document.getElementById('success-modal')!.classList.add('is-invisible');
+    }, 2000);
+  }
+
+  private showFailure() {
+    document.getElementById('failure-modal')!.classList.remove('is-invisible');
+    setTimeout(() => {
+      document.getElementById('failure-modal')!.classList.add('is-invisible');
+    }, 2000);
+  }
+
+  createNewFile(side: string, newFileForm: HTMLFormElement) {
+    let formData = new FormData(newFileForm);
+    let fileObject = Object.fromEntries(formData as any) as any;
+    let path = '';
+    if (side === 'left') {
+      path += this.left_current_path;
+    } else {
+      path += this.right_current_path;
+    }
+
+    path += '\\' + fileObject['file_name'];
+
+    if (fileObject['file_extension'] !== '') {
+      path += '.' + fileObject['file_extension'];
+    }
+
+    axios.post('http://localhost:8000/api/create_file', JSON.stringify({file_name: path})).then((response) => {
+      if (response.status == 200) {
+        this.showSuccess();
+      }
+      this.resetItems(side);
+    }).catch((error) => {
+      this.showFailure();
+    });
+
+    newFileForm.reset();
+  }
+
+  createNewFolder(side: string, newFolderForm: HTMLFormElement) {
+    let formData = new FormData(newFolderForm);
+    let folderObject = Object.fromEntries(formData as any) as any;
+    let path = '';
+    if (side === 'left') {
+      path += this.left_current_path;
+    } else {
+      path += this.right_current_path;
+    }
+
+    path += '\\' + folderObject['folder_name'];
+
+    axios.post('http://localhost:8000/api/create_folder', JSON.stringify({folder_name: path})).then((response) => {
+      if (response.status == 200) {
+        this.showSuccess();
+      }
+      this.resetItems(side);
+    }).catch((error) => {
+      this.showFailure();
+    });
+
+    newFolderForm.reset();
   }
 }

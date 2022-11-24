@@ -2,12 +2,14 @@
   <div class="card side">
 
     <div class="toolbar">
-      <button class="btn">New file</button>
-      <button class="btn">New folder</button>
+      <button class="btn" (click)="openModal('new-file-left-modal')">New file</button>
+      <button class="btn" (click)="openModal('new-folder-left-modal')">New folder</button>
       <button class="btn">Rename</button>
       <button class="btn" (click)="deleteSelected('left')">Delete</button>
     </div>
+
     <div class="separator"></div>
+
     <li class="item-name is-size-5">
       <div class="item-left-side">
         File name
@@ -17,12 +19,13 @@
         <p class="ml-5">Last accessed</p>
       </div>
     </li>
+
     <ul class="file-list">
       <div *ngFor="let item of left_side_file_list; let i = index">
-        <li [attr.location]="item['path']" id="left_{{i}}" (click)="addItemToQueue('left_' + i)" class="item-name">
+        <li [attr.item-type]="item['type']" [attr.location]="item['path']" id="left_{{i}}" class="item-name">
           <div class="item-left-side">
-            <img class="item-icon" src="../../assets/images/{{item['type']}}.png">
-            <p>{{item['path'].split('\\').pop()}}</p>
+            <img (click)="addItemToQueue('left_' + i)" class="item-icon" src="../../assets/images/{{item['type']}}.png">
+            <p class="item-name-text">{{item['path'].split('\\').pop()}}</p>
           </div>
           <div class="item-right-side">
             <p>{{item['size']}}</p>
@@ -31,15 +34,19 @@
         </li>
       </div>
     </ul>
+
   </div>
+
   <div class="card side">
     <div class="toolbar">
-      <button class="btn">New file</button>
-      <button class="btn">New folder</button>
+      <button class="btn" (click)="openModal('new-file-right-modal')">New file</button>
+      <button class="btn" (click)="openModal('new-folder-right-modal')">New folder</button>
       <button class="btn">Rename</button>
       <button class="btn" (click)="deleteSelected('right')">Delete</button>
     </div>
+
     <div class="separator"></div>
+
     <li class="item-name is-size-5">
       <div class="item-left-side">
         File name
@@ -49,11 +56,12 @@
         <p class="ml-5">Last accessed</p>
       </div>
     </li>
+
     <ul class="file-list">
       <div *ngFor="let item of right_side_file_list; let i = index">
-        <li [attr.location]="item['path']" id="right_{{i}}" (click)="addItemToQueue('right_' + i)" class="item-name">
+        <li [attr.item-type]="item['type']" [attr.location]="item['path']" id="right_{{i}}" class="item-name">
           <div class="item-left-side">
-            <img class="item-icon" src="../../assets/images/{{item['type']}}.png">
+            <img (click)="addItemToQueue('right_' + i)" class="item-icon" src="../../assets/images/{{item['type']}}.png">
             <p>{{item['path'].split('\\').pop()}}</p>
           </div>
           <div class="item-right-side">
@@ -63,5 +71,77 @@
         </li>
       </div>
     </ul>
+
   </div>
 </section>
+
+
+<div id="new-file-left-modal" class="modal">
+  <div class="card is-flex is-flex-direction-column modal-container">
+    <h1 class="is-size-5 has-text-weight-bold mb-4">Create new file</h1>
+    <form #newFileLeft (submit)="$event.preventDefault(); createNewFile('left', newFileLeft); hideModal('new-file-left-modal')" autocomplete="off">
+      <div class="input-container">
+        <input class="form-input form-file-name" type="text" name="file_name" placeholder="File name">
+        <input class="form-input form-file-extension" type="text" name="file_extension" placeholder="Extension">
+      </div>
+
+      <button class="btn is-pulled-right mt-4 is-create" type="submit">Create</button>
+      <button class="btn is-pulled-right mt-4 mr-3" (click)="$event.preventDefault(); hideModal('new-file-left-modal')">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<div id="new-folder-left-modal" class="modal">
+  <div class="card is-flex is-flex-direction-column modal-container">
+    <h1 class="is-size-5 has-text-weight-bold mb-4">Create new folder</h1>
+    <form #newFolderLeft (submit)="$event.preventDefault(); createNewFolder('left', newFolderLeft); hideModal('new-folder-left-modal')" autocomplete="off">
+      <div class="input-container">
+        <input class="form-input" type="text" name="folder_name" placeholder="Folder name">
+      </div>
+
+      <button class="btn is-pulled-right mt-4 is-create" type="submit">Create</button>
+      <button class="btn is-pulled-right mt-4 mr-3" (click)="$event.preventDefault(); hideModal('new-folder-left-modal')">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<div id="new-file-right-modal" class="modal">
+  <div class="card is-flex is-flex-direction-column modal-container">
+    <h1 class="is-size-5 has-text-weight-bold mb-4">Create new file</h1>
+    <form #newFileRight (submit)="$event.preventDefault(); createNewFile('right', newFileRight); hideModal('new-file-right-modal')" autocomplete="off">
+      <div class="input-container">
+        <input class="form-input form-file-name" type="text" name="file_name" placeholder="File name">
+        <input class="form-input form-file-extension" type="text" name="file_extension" placeholder="Extension">
+      </div>
+
+      <button class="btn is-pulled-right mt-4 is-create" type="submit">Create</button>
+      <button class="btn is-pulled-right mt-4 mr-3" (click)="$event.preventDefault(); hideModal('new-file-right-modal')">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<div id="new-folder-right-modal" class="modal">
+  <div class="card is-flex is-flex-direction-column modal-container">
+    <h1 class="is-size-5 has-text-weight-bold mb-4">Create new folder</h1>
+    <form #newFolderRight (submit)="$event.preventDefault(); createNewFolder('right', newFolderRight); hideModal('new-folder-right-modal')" autocomplete="off">
+      <div class="input-container">
+        <input class="form-input" type="text" name="folder_name" placeholder="Folder name">
+      </div>
+
+      <button class="btn is-pulled-right mt-4 is-create" type="submit">Create</button>
+      <button class="btn is-pulled-right mt-4 mr-3" (click)="$event.preventDefault(); hideModal('new-folder-right-modal')">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<div id="success-modal" class="success-modal is-invisible">
+  <div class="card popup">
+    <p class="is-size-6 has-text-weight-bold">Operation completed successfully.</p>
+  </div>
+</div>
+
+<div id="failure-modal" class="success-modal is-invisible">
+  <div class="card popup failure">
+    <p class="is-size-6 has-text-weight-bold">Operation failed. Check server output.</p>
+  </div>
+</div>
