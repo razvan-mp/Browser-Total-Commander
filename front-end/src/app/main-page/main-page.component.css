@@ -19,7 +19,7 @@
 }
 
 .file-list {
-  height: 72vh;
+  height: 68vh;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -164,4 +164,3 @@
 .failure {
   background: #ffb7b7;
 }
-

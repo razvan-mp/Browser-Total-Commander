@@ -1,14 +1,17 @@
-from datetime import datetime
 import json
-from django.http import HttpResponse, JsonResponse
 import os
+from datetime import datetime
+
+from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
 
 from total_commander_api.utils.Item import Item
 
+
 @api_view(["GET"])
 def hello(request):
     return HttpResponse("Hello World!")
+
 
 @api_view(["POST"])
 def get_files(request):
@@ -21,7 +24,8 @@ def get_files(request):
         if os.path.isdir(item):
             item = Item('folder', os.path.abspath(item), 0, datetime.fromtimestamp(os.path.getatime(item)))
         else:
-            item = Item('file', os.path.abspath(item), os.path.getsize(item), datetime.fromtimestamp(os.path.getatime(item)))
+            item = Item('file', os.path.abspath(item), os.path.getsize(item),
+                        datetime.fromtimestamp(os.path.getatime(item)))
         response.append(item.__dict__)
     return JsonResponse(response, safe=False)
 
@@ -34,12 +38,14 @@ def rename_file(request):
     os.rename(old_name, new_name)
     return JsonResponse({"message": "File renamed"})
 
+
 @api_view(["POST"])
 def delete_file(request):
     data = json.loads(request.body)
     file_name = data["file_name"]
     os.remove(file_name)
     return JsonResponse({"message": "File deleted"})
+
 
 @api_view(["POST"])
 def create_file(request):
@@ -48,12 +54,14 @@ def create_file(request):
     open(file_name, "a").close()
     return JsonResponse({"message": "File created"})
 
+
 @api_view(["POST"])
 def create_folder(request):
     data = json.loads(request.body)
     folder_name = data["folder_name"]
     os.mkdir(folder_name)
     return JsonResponse({"message": "Folder created"})
+
 
 @api_view(["POST"])
 def delete_folder(request):
@@ -62,6 +70,7 @@ def delete_folder(request):
     os.rmdir(folder_name)
     return JsonResponse({"message": "Folder deleted"})
 
+
 @api_view(["POST"])
 def copy_file(request):
     data = json.loads(request.body)
@@ -69,3 +78,11 @@ def copy_file(request):
     new_name = data["new_name"]
     open(new_name, "w").write(open(old_name, "r").read())
     return JsonResponse({"message": "File copied"})
+
+
+@api_view(["POST"])
+def move_one_up(request):
+    data = json.loads(request.body)
+    path: str = data['current_path']
+    path = os.path.dirname(os.path.abspath(path))
+    return JsonResponse({"new_path": path})
