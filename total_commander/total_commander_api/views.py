@@ -1,6 +1,8 @@
 import json
 import os
 from datetime import datetime
+import total_commander_api.utils.fileutils as fileutils
+import shutil
 
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
@@ -67,7 +69,7 @@ def create_folder(request):
 def delete_folder(request):
     data = json.loads(request.body)
     folder_name = data["folder_name"]
-    os.rmdir(folder_name)
+    shutil.rmtree(folder_name)
     return JsonResponse({"message": "Folder deleted"})
 
 
@@ -76,8 +78,17 @@ def copy_file(request):
     data = json.loads(request.body)
     old_name = data["old_name"]
     new_name = data["new_name"]
-    open(new_name, "w").write(open(old_name, "r").read())
+    fileutils.safe_copy_file(old_name, new_name)
     return JsonResponse({"message": "File copied"})
+
+
+@api_view(["POST"])
+def copy_folder(request):
+    data = json.loads(request.body)
+    old_name = data["old_name"]
+    new_name = data["new_name"]
+    fileutils.safe_copy_folder(old_name, new_name)
+    return JsonResponse({"message": "Folder copied"})
 
 
 @api_view(["POST"])
@@ -101,3 +112,21 @@ def save_file_content(request):
     content = data["content"]
     open(file_name, "w").write(content)
     return JsonResponse({"message": "File saved"})
+
+
+@api_view(["POST"])
+def move_file(request):
+    data = json.loads(request.body)
+    old_name = data["old_name"]
+    new_name = data["new_name"]
+    fileutils.safe_move_file(old_name, new_name)
+    return JsonResponse({"message": "File moved"})
+
+
+@api_view(["POST"])
+def move_folder(request):
+    data = json.loads(request.body)
+    old_name = data["old_name"]
+    new_name = data["new_name"]
+    fileutils.safe_move_folder(old_name, new_name)
+    return JsonResponse({"message": "Folder moved"})

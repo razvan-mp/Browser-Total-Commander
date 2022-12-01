@@ -7,6 +7,8 @@
       <button class="btn" (click)="openModal('new-file-left-modal', '')">New file</button>
       <button class="btn" (click)="openModal('new-folder-left-modal', '')">New folder</button>
       <button class="btn" (click)="openModal('rename-file-left-modal', '')">Rename</button>
+      <button class="btn" (click)="copySelected('left')">Copy to right</button>
+      <button class="btn" (click)="moveSelected('left')">Move to right</button>
       <button class="btn" (click)="deleteSelected('left')">Delete</button>
     </div>
 
@@ -53,6 +55,8 @@
       <button class="btn" (click)="openModal('new-file-right-modal', '')">New file</button>
       <button class="btn" (click)="openModal('new-folder-right-modal', '')">New folder</button>
       <button class="btn" (click)="openModal('rename-file-right-modal', '')">Rename</button>
+      <button class="btn" (click)="copySelected('right')">Copy to left</button>
+      <button class="btn" (click)="moveSelected('right')">Move to left</button>
       <button class="btn" (click)="deleteSelected('right')">Delete</button>
     </div>
 

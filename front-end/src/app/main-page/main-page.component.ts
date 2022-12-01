@@ -231,24 +231,6 @@ export class MainPageComponent {
     }
   }
 
-  private showSuccess(message: string) {
-    document.getElementById('success-msg')!.innerHTML = message;
-    document.getElementById('success-modal')!.classList.remove('is-invisible');
-    setTimeout(() => {
-      document.getElementById('success-modal')!.classList.add('is-invisible');
-      document.getElementById('success-msg')!.innerHTML = '';
-    }, 2000);
-  }
-
-  private showFailure(message: string) {
-    document.getElementById('failure-msg')!.innerHTML = message;
-    document.getElementById('failure-modal')!.classList.remove('is-invisible');
-    setTimeout(() => {
-      document.getElementById('failure-modal')!.classList.add('is-invisible');
-      document.getElementById('failure-msg')!.innerHTML = '';
-    }, 2000);
-  }
-
   deleteSelected(side: string) {
     let elements = Array.from(document.getElementsByClassName('selected')!);
     if (side === 'left') {
@@ -268,7 +250,10 @@ export class MainPageComponent {
         }
         resolve();
       }).then(() => {
-        this.resetItems(side);
+        setTimeout(() => {
+          this.resetItems('right');
+          this.resetItems('left');
+        }, 200);
         this.showSuccess('Selected files deleted successfully!');
       }).catch(() => {
         this.showFailure('Error deleting files. Check server log.');
@@ -291,7 +276,10 @@ export class MainPageComponent {
         }
         resolve();
       }).then(() => {
-        this.resetItems(side);
+        setTimeout(() => {
+          this.resetItems('right');
+          this.resetItems('left');
+        }, 200);
         this.showSuccess('Selected files deleted successfully!');
       }).catch(() => {
         this.showFailure('Error deleting files. Check server log.');
@@ -303,12 +291,167 @@ export class MainPageComponent {
     const textArea = document.getElementById('edit-file-textarea')! as HTMLTextAreaElement;
     const location = textArea.getAttribute('data-location');
     const content = textArea.value;
-    axios.post('http://localhost:8000/api/save_file_content', JSON.stringify({file_name: location, content: content})).then((response: any) => {
+    axios.post('http://localhost:8000/api/save_file_content', JSON.stringify({
+      file_name: location,
+      content: content
+    })).then((response: any) => {
       this.showSuccess('File edited successfully.');
       this.hideModal('edit-file-modal');
     }).catch((error: any) => {
       this.showFailure('Edit failed. Check console output.');
       this.hideModal('edit-file-modal');
     });
+  }
+
+  copySelected(source: string) {
+    let elements = Array.from(document.getElementsByClassName('selected')!);
+    if (source === 'left') {
+      return new Promise<void>((resolve, reject) => {
+        for (let element of elements) {
+          //@ts-ignore
+          if (element.attributes['id'].value.toString().startsWith('left')) {
+            //@ts-ignore
+            let item_location = element.attributes['location'].value.toString();
+            //@ts-ignore
+            if (element.attributes['item-type'].value.toString() === 'file') {
+              axios.post('http://localhost:8000/api/copy_file', JSON.stringify({
+                old_name: item_location,
+                new_name: this.right_current_path
+              }));
+            } else {
+              axios.post('http://localhost:8000/api/copy_folder', JSON.stringify({
+                old_name: item_location,
+                new_name: this.right_current_path
+              }));
+            }
+          }
+        }
+        resolve();
+      }).then(() => {
+        setTimeout(() => {
+          this.resetItems('left');
+          this.resetItems('right');
+        }, 200);
+        this.showSuccess('Selected files copied successfully!');
+      }).catch(() => {
+        this.showFailure('Error deleting files. Check server log.');
+      });
+    } else {
+      return new Promise<void>((resolve, reject) => {
+        for (let element of elements) {
+          //@ts-ignore
+          if (element.attributes['id'].value.toString().startsWith('right')) {
+            //@ts-ignore
+            let item_location = element.attributes['location'].value.toString();
+            //@ts-ignore
+            if (element.attributes['item-type'].value.toString() === 'file') {
+              axios.post('http://localhost:8000/api/copy_file', JSON.stringify({
+                old_name: item_location,
+                new_name: this.left_current_path
+              }));
+            } else {
+              axios.post('http://localhost:8000/api/copy_folder', JSON.stringify({
+                old_name: item_location,
+                new_name: this.left_current_path
+              }));
+            }
+          }
+        }
+        resolve();
+      }).then(() => {
+        setTimeout(() => {
+          this.resetItems('left');
+          this.resetItems('right');
+        }, 200);
+        this.showSuccess('Selected files copied successfully!');
+      }).catch(() => {
+        this.showFailure('Error deleting files. Check server log.');
+      });
+    }
+  }
+
+  moveSelected(source: string) {
+    let elements = Array.from(document.getElementsByClassName('selected')!);
+    if (source === 'left') {
+      return new Promise<void>((resolve, reject) => {
+        for (let element of elements) {
+          //@ts-ignore
+          if (element.attributes['id'].value.toString().startsWith('left')) {
+            //@ts-ignore
+            let item_location = element.attributes['location'].value.toString();
+            //@ts-ignore
+            if (element.attributes['item-type'].value.toString() === 'file') {
+              axios.post('http://localhost:8000/api/move_file', JSON.stringify({
+                old_name: item_location,
+                new_name: this.right_current_path
+              }));
+            } else {
+              axios.post('http://localhost:8000/api/move_folder', JSON.stringify({
+                old_name: item_location,
+                new_name: this.right_current_path
+              }));
+            }
+          }
+        }
+        resolve();
+      }).then(() => {
+        setTimeout(() => {
+          this.resetItems('left');
+          this.resetItems('right');
+        }, 200);
+        this.showSuccess('Selected files copied successfully!');
+      }).catch(() => {
+        this.showFailure('Error deleting files. Check server log.');
+      });
+    } else {
+      return new Promise<void>((resolve, reject) => {
+        for (let element of elements) {
+          //@ts-ignore
+          if (element.attributes['id'].value.toString().startsWith('right')) {
+            //@ts-ignore
+            let item_location = element.attributes['location'].value.toString();
+            //@ts-ignore
+            if (element.attributes['item-type'].value.toString() === 'file') {
+              axios.post('http://localhost:8000/api/move_file', JSON.stringify({
+                old_name: item_location,
+                new_name: this.left_current_path
+              }));
+            } else {
+              axios.post('http://localhost:8000/api/move_folder', JSON.stringify({
+                old_name: item_location,
+                new_name: this.left_current_path
+              }));
+            }
+          }
+        }
+        resolve();
+      }).then(() => {
+        setTimeout(() => {
+          this.resetItems('left');
+          this.resetItems('right');
+        }, 200);
+        this.showSuccess('Selected files copied successfully!');
+      }).catch(() => {
+        this.showFailure('Error deleting files. Check server log.');
+      });
+    }
+  }
+
+  private showSuccess(message: string) {
+    document.getElementById('success-msg')!.innerHTML = message;
+    document.getElementById('success-modal')!.classList.remove('is-invisible');
+    setTimeout(() => {
+      document.getElementById('success-modal')!.classList.add('is-invisible');
+      document.getElementById('success-msg')!.innerHTML = '';
+    }, 2000);
+  }
+
+  private showFailure(message: string) {
+    document.getElementById('failure-msg')!.innerHTML = message;
+    document.getElementById('failure-modal')!.classList.remove('is-invisible');
+    setTimeout(() => {
+      document.getElementById('failure-modal')!.classList.add('is-invisible');
+      document.getElementById('failure-msg')!.innerHTML = '';
+    }, 2000);
   }
 }
