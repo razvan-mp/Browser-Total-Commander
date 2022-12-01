@@ -86,3 +86,18 @@ def move_one_up(request):
     path: str = data['current_path']
     path = os.path.dirname(os.path.abspath(path))
     return JsonResponse({"new_path": path})
+
+@api_view(["POST"])
+def get_file_content(request):
+    data = json.loads(request.body)
+    file_name = data["file_name"]
+    content = open(file_name, "r").read()
+    return JsonResponse({"content": content})
+
+@api_view(["POST"])
+def save_file_content(request):
+    data = json.loads(request.body)
+    file_name = data["file_name"]
+    content = data["content"]
+    open(file_name, "w").write(content)
+    return JsonResponse({"message": "File saved"})

@@ -11,4 +11,6 @@ urlpatterns = [
     path('copy_file', views.copy_file),
     path('get_files', views.get_files),
     path('move_one_up', views.move_one_up),
+    path('get_file_content', views.get_file_content),
+    path('save_file_content', views.save_file_content),
 ]

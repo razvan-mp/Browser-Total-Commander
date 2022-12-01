@@ -1,12 +1,12 @@
-<section class="section">
+<section class="section is-dark">
   <div class="card side">
 
     <div class="is-size-5 has-text-weight-bold">Actions</div>
 
     <div class="toolbar">
-      <button class="btn" (click)="openModal('new-file-left-modal')">New file</button>
-      <button class="btn" (click)="openModal('new-folder-left-modal')">New folder</button>
-      <button class="btn" (click)="openModal('rename-file-left-modal')">Rename</button>
+      <button class="btn" (click)="openModal('new-file-left-modal', '')">New file</button>
+      <button class="btn" (click)="openModal('new-folder-left-modal', '')">New folder</button>
+      <button class="btn" (click)="openModal('rename-file-left-modal', '')">Rename</button>
       <button class="btn" (click)="deleteSelected('left')">Delete</button>
     </div>
 
@@ -26,14 +26,14 @@
       <div class="item-left-side">
         <img alt="back-arrow" (click)="$event.preventDefault(); moveUpOne('left')" class="item-icon"
              src="../../assets/images/return.png">
-        <p class="has-text-weight-bold" (click)="$event.preventDefault(); moveUpOne('left')">back</p>
+        <p class="has-text-weight-bold back-button" (click)="$event.preventDefault(); moveUpOne('left')">back</p>
       </div>
       <div *ngFor="let item of left_side_file_list; let i = index">
         <li [attr.item-type]="item['type']" [attr.location]="item['path']" id="left_{{i}}" class="item-name">
           <div class="item-left-side">
             <img (click)="addItemToQueue('left_' + i)" class="item-icon" src="../../assets/images/{{item['type']}}.png">
-            <p (click)="doActionOnItem(item['type'], item['path'], 'left')"
-               class="item-name-text">{{item['path'].split('\\').pop()}}</p>
+            <p (click)="doActionOnItem(item['type'], item['path'], 'left')" class="item-name-text">
+              {{item['path'].split('\\').pop()}}</p>
           </div>
           <div class="item-right-side">
             <p>{{item['size']}}</p>
@@ -50,9 +50,9 @@
     <div class="is-size-5 has-text-weight-bold">Actions</div>
 
     <div class="toolbar">
-      <button class="btn" (click)="openModal('new-file-right-modal')">New file</button>
-      <button class="btn" (click)="openModal('new-folder-right-modal')">New folder</button>
-      <button class="btn" (click)="openModal('rename-file-right-modal')">Rename</button>
+      <button class="btn" (click)="openModal('new-file-right-modal', '')">New file</button>
+      <button class="btn" (click)="openModal('new-folder-right-modal', '')">New folder</button>
+      <button class="btn" (click)="openModal('rename-file-right-modal', '')">Rename</button>
       <button class="btn" (click)="deleteSelected('right')">Delete</button>
     </div>
 
@@ -72,14 +72,15 @@
       <div class="item-left-side">
         <img alt="back-arrow" (click)="$event.preventDefault(); moveUpOne('right')" class="item-icon"
              src="../../assets/images/return.png">
-        <p class="has-text-weight-bold" (click)="$event.preventDefault(); moveUpOne('right')">back</p>
+        <p class="has-text-weight-bold back-button" (click)="$event.preventDefault(); moveUpOne('right')">back</p>
       </div>
       <div *ngFor="let item of right_side_file_list; let i = index">
         <li [attr.item-type]="item['type']" [attr.location]="item['path']" id="right_{{i}}" class="item-name">
           <div class="item-left-side">
-            <img (click)="addItemToQueue('right_' + i)" class="item-icon" src="../../assets/images/{{item['type']}}.png">
-            <p (click)="doActionOnItem(item['type'], item['path'], 'right')"
-               class="item-name-text">{{item['path'].split('\\').pop()}}</p>
+            <img (click)="addItemToQueue('right_' + i)" class="item-icon"
+                 src="../../assets/images/{{item['type']}}.png">
+            <p (click)="doActionOnItem(item['type'], item['path'], 'right')" class="item-name-text">
+              {{item['path'].split('\\').pop()}}</p>
           </div>
           <div class="item-right-side">
             <p>{{item['size']}}</p>
@@ -92,23 +93,68 @@
   </div>
 </section>
 
+<div id="edit-file-modal" class="modal">
+  <div class="card edit-file-card p-5">
+    <h1 class="is-size-5 has-text-weight-bold mb-1">Edit file</h1>
+    <form>
+      <textarea data-location="" id="edit-file-textarea" rows="10" cols="10" spellcheck="false">
+      </textarea>
+    </form>
+    <button
+      (click)="$event.preventDefault(); doEditOnItem();"
+      class="is-pulled-right btn is-create mt-5 mb-5 ml-3">Save Changes</button>
+    <button
+      (click)="$event.preventDefault(); hideModal('edit-file-modal')"
+      class="is-pulled-right btn mt-5 mb-5"
+    >
+      Cancel
+    </button>
+  </div>
+</div>
 
-<div id="new-file-left-modal" class="modal">
+<div id="rename-file-left-modal" class="modal">
   <div class="card is-flex is-flex-direction-column modal-container">
-    <h1 class="is-size-5 has-text-weight-bold mb-4">Create new file</h1>
-    <form #newFileLeft
-          (submit)="$event.preventDefault(); createNewFile('left', newFileLeft); hideModal('new-file-left-modal')"
+    <h1 class="is-size-5 has-text-weight-bold mb-4">Rename item(s)</h1>
+    <form #renameFileLeft
+          (submit)="$event.preventDefault(); renameSelected('left', renameFileLeft); hideModal('rename-file-left-modal')"
           autocomplete="off">
-      <div class="input-container">
-        <input class="form-input form-file-name" type="text" name="file_name" placeholder="File name">
-        <input class="form-input form-file-extension" type="text" name="file_extension" placeholder="Extension">
+      <div id="rename-file-left-inputs" class="input-container is-flex is-flex-direction-column">
       </div>
 
-      <button class="btn is-pulled-right mt-4 is-create" type="submit">Create</button>
-      <button class="btn is-pulled-right mt-4 mr-3" (click)="$event.preventDefault(); hideModal('new-file-left-modal')">
-        Cancel
+      <button class="btn is-pulled-right mt-4 is-create" type="submit">Rename</button>
+      <button class="btn is-pulled-right mt-4 mr-3"
+              (click)="$event.preventDefault(); hideModal('rename-file-left-modal')">Cancel
       </button>
     </form>
+  </div>
+</div>
+
+<div id="rename-file-right-modal" class="modal">
+  <div class="card is-flex is-flex-direction-column modal-container">
+    <h1 class="is-size-5 has-text-weight-bold mb-4">Rename item(s)</h1>
+    <form #renameFileRight
+          (submit)="$event.preventDefault(); renameSelected('right', renameFileRight); hideModal('rename-file-right-modal')"
+          autocomplete="off">
+      <div id="rename-file-right-inputs" class="input-container is-flex is-flex-direction-column">
+      </div>
+
+      <button class="btn is-pulled-right mt-4 is-create" type="submit">Rename</button>
+      <button class="btn is-pulled-right mt-4 mr-3"
+              (click)="$event.preventDefault(); hideModal('rename-file-right-modal')">Cancel
+      </button>
+    </form>
+  </div>
+</div>
+
+<div id="success-modal" class="success-modal is-invisible">
+  <div class="card popup">
+    <p id="success-msg" class="is-size-6 has-text-weight-bold"></p>
+  </div>
+</div>
+
+<div id="failure-modal" class="success-modal is-invisible">
+  <div class="card popup failure">
+    <p id="failure-msg" class="is-size-6 has-text-weight-bold"></p>
   </div>
 </div>
 
@@ -149,6 +195,25 @@
   </div>
 </div>
 
+<div id="new-file-left-modal" class="modal">
+  <div class="card is-flex is-flex-direction-column modal-container">
+    <h1 class="is-size-5 has-text-weight-bold mb-4">Create new file</h1>
+    <form #newFileLeft
+          (submit)="$event.preventDefault(); createNewFile('left', newFileLeft); hideModal('new-file-left-modal')"
+          autocomplete="off">
+      <div class="input-container">
+        <input class="form-input form-file-name" type="text" name="file_name" placeholder="File name">
+        <input class="form-input form-file-extension" type="text" name="file_extension" placeholder="Extension">
+      </div>
+
+      <button class="btn is-pulled-right mt-4 is-create" type="submit">Create</button>
+      <button class="btn is-pulled-right mt-4 mr-3" (click)="$event.preventDefault(); hideModal('new-file-left-modal')">
+        Cancel
+      </button>
+    </form>
+  </div>
+</div>
+
 <div id="new-folder-right-modal" class="modal">
   <div class="card is-flex is-flex-direction-column modal-container">
     <h1 class="is-size-5 has-text-weight-bold mb-4">Create new folder</h1>
@@ -164,58 +229,5 @@
               (click)="$event.preventDefault(); hideModal('new-folder-right-modal')">Cancel
       </button>
     </form>
-  </div>
-</div>
-
-<div id="rename-file-left-modal" class="modal">
-  <div class="card is-flex is-flex-direction-column modal-container">
-    <h1 class="is-size-5 has-text-weight-bold mb-4">Rename item(s)</h1>
-    <form #renameFileLeft
-          (submit)="$event.preventDefault(); renameSelected('left', renameFileLeft); hideModal('rename-file-left-modal')"
-          autocomplete="off">
-      <div id="rename-file-left-inputs" class="input-container is-flex is-flex-direction-column">
-      </div>
-
-      <button class="btn is-pulled-right mt-4 is-create" type="submit">Rename</button>
-      <button class="btn is-pulled-right mt-4 mr-3"
-              (click)="$event.preventDefault(); hideModal('rename-file-left-modal')">Cancel
-      </button>
-    </form>
-  </div>
-</div>
-
-<div id="rename-file-right-modal" class="modal">
-  <div class="card is-flex is-flex-direction-column modal-container">
-    <h1 class="is-size-5 has-text-weight-bold mb-4">Rename item(s)</h1>
-    <form #renameFileRight
-          (submit)="$event.preventDefault(); renameSelected('right', renameFileRight); hideModal('rename-file-right-modal')"
-          autocomplete="off">
-      <div id="rename-file-right-inputs" class="input-container is-flex is-flex-direction-column">
-      </div>
-
-      <button class="btn is-pulled-right mt-4 is-create" type="submit">Rename</button>
-      <button class="btn is-pulled-right mt-4 mr-3"
-              (click)="$event.preventDefault(); hideModal('rename-file-right-modal')">Cancel
-      </button>
-    </form>
-  </div>
-</div>
-
-<div id="edit-file-modal" class="modal">
-  <div class="card is-flex is-flex-direction-column modal-container">
-<!--    <TextAreaWithLineNumber/>-->
-    <textarea class="textarea" cols="100%"></textarea>
-  </div>
-</div>
-
-<div id="success-modal" class="success-modal is-invisible">
-  <div class="card popup">
-    <p id="success-msg" class="is-size-6 has-text-weight-bold"></p>
-  </div>
-</div>
-
-<div id="failure-modal" class="success-modal is-invisible">
-  <div class="card popup failure">
-    <p id="failure-msg" class="is-size-6 has-text-weight-bold"></p>
   </div>
 </div>
