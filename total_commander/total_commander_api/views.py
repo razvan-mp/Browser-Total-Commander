@@ -144,3 +144,14 @@ def move_folder(request):
     new_name = data["new_name"]
     fileutils.safe_move_folder(old_name, new_name)
     return JsonResponse({"message": "Folder moved"})
+
+
+@api_view(["POST"])
+def change_path_to(request):
+    data = json.loads(request.body)
+    path = data["path"]
+    if not os.path.exists(path):
+        return JsonResponse({"message": "Path does not exist"})
+    if not os.path.isdir(path):
+        return JsonResponse({"message": "Path is not a directory"})
+    return JsonResponse({"message": path})

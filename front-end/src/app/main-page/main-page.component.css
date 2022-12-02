@@ -19,7 +19,7 @@
 }
 
 .file-list {
-  height: 68vh;
+  height: 65vh;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -195,4 +195,44 @@ textarea:focus {
 .edit-file-card {
   width: 80%;
   max-height: 80vh;
+}
+
+.code {
+  all: unset;
+  font-family: 'JetBrains Mono', monospace;
+
+}
+
+.terminal {
+  width: 97%;
+  display: flex;
+  gap: 5px;
+  padding: 5px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px 3px rgba(0, 0, 0, 0.05);
+}
+
+.code-input {
+  width: 100% !important;
+}
+
+.terminal-form {
+  display: flex;
+  flex-direction: row;
+}
+
+.terminal-button {
+  background-color: white;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px 3px rgba(0, 0, 0, 0.05);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  transition: all 200ms;
+}
+
+.terminal-button:hover {
+  cursor: pointer;
+  background-color: #9cb1ff;
 }

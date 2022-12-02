@@ -325,7 +325,9 @@ export class MainPageComponent {
     setTimeout(() => {
       this.resetItems('left');
       this.resetItems('right');
-      this.showSuccess('Files renamed. Renames resulting in duplicates were ignored.')
+      this.showSuccess(
+        'Files renamed. Renames resulting in duplicates were ignored.'
+      );
     }, 100);
   }
 
@@ -623,6 +625,33 @@ export class MainPageComponent {
           this.showFailure('Error deleting files. Check server log.');
         });
     }
+  }
+
+  changeDirectory(side: string, path: HTMLFormElement) {
+    const content = Object.fromEntries(new FormData(path) as any) as any;
+    axios
+      .post(
+        'http://localhost:8000/api/change_path_to',
+        JSON.stringify({ path: content['terminal'] })
+      )
+      .then((response) => {
+        if (response.data['message'] === 'Path does not exist') {
+          this.showFailure('Given path does not exist!');
+        } else if (response.data['message'] === 'Path is not a directory') {
+          this.showFailure('Given path is not a directory!');
+        } else {
+          if (side === 'left') {
+            this.left_current_path = content['terminal'];
+          } else {
+            this.right_current_path = content['terminal'];
+          }
+        }
+        setTimeout(() => {
+          this.resetItems('left');
+          this.resetItems('right');
+        }, 100);
+      })
+      .catch((error) => {});
   }
 
   private showSuccess(message: string) {

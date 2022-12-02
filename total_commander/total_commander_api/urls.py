@@ -16,4 +16,5 @@ urlpatterns = [
     path("save_file_content", views.save_file_content),
     path("move_file", views.move_file),
     path("move_folder", views.move_folder),
+    path("change_path_to", views.change_path_to),
 ]
