@@ -18,16 +18,25 @@ def hello(request):
 @api_view(["POST"])
 def get_files(request):
     data = json.loads(request.body)
-    path = data['path']
+    path = data["path"]
     items = os.listdir(path)
     response = []
     for item in items:
         item = os.path.join(path, item)
         if os.path.isdir(item):
-            item = Item('folder', os.path.abspath(item), 0, datetime.fromtimestamp(os.path.getatime(item)))
+            item = Item(
+                "folder",
+                os.path.abspath(item),
+                "",
+                datetime.fromtimestamp(os.path.getatime(item)),
+            )
         else:
-            item = Item('file', os.path.abspath(item), os.path.getsize(item),
-                        datetime.fromtimestamp(os.path.getatime(item)))
+            item = Item(
+                "file",
+                os.path.abspath(item),
+                f"{round(os.path.getsize(os.path.abspath(item)) / 1024, 2)} KB",
+                datetime.fromtimestamp(os.path.getatime(item)),
+            )
         response.append(item.__dict__)
     return JsonResponse(response, safe=False)
 
@@ -37,7 +46,10 @@ def rename_file(request):
     data = json.loads(request.body)
     old_name = data["old_name"]
     new_name = data["new_name"]
-    os.rename(old_name, new_name)
+    try:
+        os.rename(old_name, new_name)
+    except FileExistsError as e:
+        return JsonResponse({"error": "File already exists"})
     return JsonResponse({"message": "File renamed"})
 
 
@@ -94,9 +106,10 @@ def copy_folder(request):
 @api_view(["POST"])
 def move_one_up(request):
     data = json.loads(request.body)
-    path: str = data['current_path']
+    path: str = data["current_path"]
     path = os.path.dirname(os.path.abspath(path))
     return JsonResponse({"new_path": path})
+
 
 @api_view(["POST"])
 def get_file_content(request):
@@ -104,6 +117,7 @@ def get_file_content(request):
     file_name = data["file_name"]
     content = open(file_name, "r").read()
     return JsonResponse({"content": content})
+
 
 @api_view(["POST"])
 def save_file_content(request):
