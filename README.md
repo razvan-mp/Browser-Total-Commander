@@ -11,6 +11,7 @@ It supports multiple file system operations, such as:
 - Changing current working directories via absolute paths
 - Deleting files/folders
 
+You can watch a demo video [here](https://www.youtube.com/watch?v=cQovfoYOtFs).
 
 ## Prerequisites
 To run this app, you will need:
