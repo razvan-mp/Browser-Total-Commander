@@ -285,9 +285,9 @@ export class MainPageComponent {
   renameSelected(side: string, renameFileForm: HTMLFormElement) {
     let path: string = '';
     if (side === 'left') {
-      path = this.left_current_path;
+      path = this.left_current_path + "\\";
     } else {
-      path = this.right_current_path;
+      path = this.right_current_path + "\\";
     }
 
     const content: Object = Object.fromEntries(
