@@ -639,6 +639,8 @@ export class MainPageComponent {
           this.showFailure('Given path does not exist!');
         } else if (response.data['message'] === 'Path is not a directory') {
           this.showFailure('Given path is not a directory!');
+        } else if (response.data['message'] === 'Path is not absolute') {
+          this.showFailure('Given path is not absolute!');
         } else {
           if (side === 'left') {
             this.left_current_path = content['terminal'];

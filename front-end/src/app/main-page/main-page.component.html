@@ -48,7 +48,7 @@
     <div class="terminal">
       <p class="code">cd</p>
       <form class="terminal-form" #terminalFormLeft (submit)="$event.preventDefault(); changeDirectory('left', terminalFormLeft);">
-        <input size="90%" class="code code-input" type="text" name="terminal" placeholder="Enter path to navigate to...">
+        <input size="90%" class="code code-input" type="text" name="terminal" placeholder="Enter path (absolute) to navigate to...">
         <button type="submit" class="terminal-button is-create is-pulled-right">Navigate</button>
       </form>
     </div>
@@ -104,7 +104,7 @@
     <div class="terminal">
       <p class="code">cd</p>
       <form class="terminal-form" #terminalFormRight (submit)="$event.preventDefault(); changeDirectory('right', terminalFormRight);">
-        <input size="90%" class="code code-input" type="text" name="terminal" placeholder="Enter path to navigate to...">
+        <input size="90%" class="code code-input" type="text" name="terminal" placeholder="Enter path (absolute) to navigate to...">
         <button type="submit" class="terminal-button is-create is-pulled-right">Navigate</button>
       </form>
     </div>
